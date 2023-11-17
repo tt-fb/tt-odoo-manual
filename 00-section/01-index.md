@@ -2,7 +2,7 @@
 
 ODOO
 
-![Odoo](images/07-elisinfo/00-section/01_01-elisinfo_cover.png)
+![Odoo](https://github.com/tt-fb/tt-odoo-manual/blob/main/00-section/odoo_logo.png)
 
 
 Questo volume continua a partire da quanto già fatto nei seguenti volumi:
