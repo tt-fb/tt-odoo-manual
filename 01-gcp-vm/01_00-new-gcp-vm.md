@@ -1,6 +1,10 @@
 # <a name="top"></a> Cap 1.1 - La macchina virtuale su google cloud
 
-Il nostro ambiente di sviluppo e produzione lo mettiamo su una macchina virtuale (VM) su Google Cloud Platform (GCP) e la raggiungeremo tramite ssh con Visual Studio Code (VS Code).
+Il nostro ambiente di sviluppo e produzione lo mettiamo su una macchina virtuale (VM) su Google Cloud Platform (GCP) che raggiungeremo tramite ssh con Visual Studio Code (VS Code).
+
+Prepariamo la macchina virtuale GCP VM (Google Cloud Project Virtual Machine) su cui installeremo Odoo.
+
+> nota: ogni macchina virtuale GCP VM che viene creata è detta "**istanza**"
 
 
 
@@ -10,7 +14,7 @@ Il nostro ambiente di sviluppo e produzione lo mettiamo su una macchina virtuale
 - []()
 
 
-## Creiamo la VM
+## Creiamo la GCP VM
 
 Andiamo sulla Google Cloud Console (https://console.cloud.google.com/)
 - Navigation Menu -> Products & solutions -> All products
