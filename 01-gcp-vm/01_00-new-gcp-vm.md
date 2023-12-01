@@ -26,16 +26,29 @@ Andiamo sulla Google Cloud Console (https://console.cloud.google.com/)
 - Compute -> Compute Engine
 - go to -> VM instances -> + CREATE INSTANCE
 
+
+![Google Cloud Console](https://github.com/tt-fb/tt-odoo-manual/blob/main/01-gcp-vm/01_01-gcp-console.png)
+![Google Cloud Console](https://github.com/tt-fb/tt-odoo-manual/blob/main/01-gcp-vm/01_02-gcp-all_products.png)
+![Google Cloud Console](https://github.com/tt-fb/tt-odoo-manual/blob/main/01-gcp-vm/01_03-gcp-compute_engine.png)
+![Google Cloud Console](https://github.com/tt-fb/tt-odoo-manual/blob/main/01-gcp-vm/01_04-gcp-vm_istances.png)
+
+
+
 ### Name
-Name: odoo-server
+Name: server-odoo
 
 ### Region and Zone (are **permanent**)
+Region: europe-west8 (Milan)
+Zone: europe-west8-a
+
+or
+
 Region: europe-west1 (Belgium)
 Zone: europe-west1-b
 
 ### Machine configuration
 - General purpose -> N2 (Balanced price & performance)
-- -> n2-standard-2 (2 vCPU, 1 core, 8 GB memory) [$ 63.39/month]
+- -> n2-standard-2 (2 vCPU, 1 core, 8 GB memory) ($66.95/month in Milan - $63.39/month in Belgium)
 
 ### Boot disk
 Qui scegliamo il nostro sistema operativo.
@@ -43,14 +56,15 @@ Qui scegliamo il nostro sistema operativo.
   - Operating System: Ubuntu
   - Version: Ubuntu 22.04 LTS (x86/64, amd64 jammy image built on 2023-10-30)
   - Boot disk type: Balanced persistent disk
-  - Size (GB): 40
+  - Size (GB): 50
+
+Click su SELECT
 
 ### Identity and API access
 Le piattaforme Google lavorano tutte per API ed alla macchina virtuale viene, di default, assegnata una sua identità che è chiamata "service account". Questo è importante.
 
 - Lasciamo il `service account` di default.
   ad esempio, Compute Engine default service account: 900749175873-compute@developer.gserviceaccount.com
-
 - Access scopes: Allow default access
 
 ## Firewall

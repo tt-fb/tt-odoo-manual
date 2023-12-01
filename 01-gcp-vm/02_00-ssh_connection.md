@@ -1,6 +1,6 @@
-# <a name="top"></a> Cap 1.2 - Colleghiamo VS Code all GCP VM
+# <a name="top"></a> Cap 1.2 - Creiamo un collegamento SSH alla GCP VM
 
-Colleghiamo la nostra app Visual Studio Code alla macchina virtuale su google cloud platform.
+Colleghiamoci alla macchina virtuale di google cloud platform tramite Secure SHell (SSH).
 
 
 
@@ -9,40 +9,182 @@ Colleghiamo la nostra app Visual Studio Code alla macchina virtuale su google cl
 - [How to connect to GCP VM Instance using SSH MacOS Terminal](https://www.youtube.com/watch?v=2ibBF9YqveY)
   Questo video ha funzionato!!! E mi sembra anche molto semplice. Un ottimo punto di partenza.
   Spiega come collegarsi con MAC e c'è un altro video che spiega come collegarsi con Windows
+- [How to connect to GCP VM Instance using SSH on WINDOWS](https://www.youtube.com/watch?v=StA1i-p6G4o)
+  Questo video è come quello sopra ma pe WINDOWS.
+  Su windows dobbiamo installare le applicazioni "PUTTY" e "PUTTYGEN".
 - [How to Connect to Google Compute Engine Virtual Machine with SSH or puTTY on Mac](https://www.youtube.com/watch?v=vA18jo-4gu4)
   Anche questo video dice la stessa cosa ma con altri spunti
 - [stackoverflow: ssh to google cloud platform - permission denied](https://stackoverflow.com/questions/51614552/google-cloud-platform-ssh-to-google-cloud-instance-will-have-permission-denied)
   Qui c’è una nota interessante (comunque già considerata nei video sopra)
-- [SSH into Remote VM with VS Code | Tunneling into any cloud | GCP Demo](https://www.youtube.com/watch?v=0Bjx3Ra8PRM)
-  Qui parla di più su VS code
-
-
----
-Using VS Code with GCP VMs
-https://learn.canceridc.dev/cookbook/virtual-machines/using-vs-code-with-gcp-vms
-
-Use VSCode and Remote SSH extension to connect to Compute Engine on Google Cloud
-https://medium.com/@ivanzhd/vscode-sftp-connection-to-compute-engine-on-google-cloud-platform-gcloud-9312797d56eb
 
 
 
 ## Colleghiamoci alla VM da Mac con SSH
-Per collegarci dobbiamo creare una coppia di chiavi (Privata e Pubblica). Metteremo la chiave pubblica sull'istanza della VM (Virtual Machine) di GCP (Google Cloud Platform) e ci colleghiamo usando la nostra chiave privata.
+Per collegarci dobbiamo creare una coppia di chiavi (Privata e Pubblica). Metteremo la chiave pubblica sull'istanza della VM (Virtual Machine) su GCP (Google Cloud Platform) e ci colleghiamo usando la nostra chiave privata.
 
 Lanciamo il terminale e creiamo la coppia di chiavi:
 
 ```bash
-$ ssh-keygen -t rsa -f ~/Desktop/key -C techamatic
+$ cd ~/.ssh
+$ ssh-keygen -t rsa -f fb-odoo-server-key -C tt-fb
+```
+
+> nota: per la "passfrase" lascio il campo vuoto
+
+- `cd ~` entra nella cartella dell'utente. Nel mio caso `/Users/FB`.
+    `/.ssh` entra nella cartella nascosta dove, di default, sono raccolti i files delle chiavi
+- `-t` è per scegliere il tipo di criptatura. Abbiamo scelto `rsa`.
+- `-f` è per scegliere la cartella su cui mettere le chiavi.
+- `-C` è per lo "username". In questo caso `tt-fb`
+
+Esempio:
+
+```bash
+MacBook-Pro-di-Flavio:~ FB$ cd ~/.ssh
+MacBook-Pro-di-Flavio:.ssh FB$ ls
+config		id_rsa		id_rsa.pub	known_hosts
+MacBook-Pro-di-Flavio:.ssh FB$ ssh-keygen -t rsa -f fb-odoo-server-key -C tt-fb
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in fb-odoo-server-key.
+Your public key has been saved in fb-odoo-server-key.pub.
+The key fingerprint is:
+SHA256:q1/+wWXQN2r5/diPxCwhF7sGRyC7cacP/nnnR0kBrJQ tt-fb
+The key randomart image is:
++---[RSA 3072]----+
+|        . . o..  |
+|         o E * . |
+|        o o o ..o|
+|         + = +oo.|
+|        S = =++ .|
+|         + O.A..o|
+|        . o C +o.|
+|       . o o =.++|
+|      ... ..+.ooB|
++----[SHA256]-----+
+MacBook-Pro-di-Flavio:.ssh FB$ ls
+config			fb-odoo-server-key	fb-odoo-server-key.pub	id_rsa			id_rsa.pub		known_hosts
+MacBook-Pro-di-Flavio:.ssh FB$ 
+```
+
+
+## Mettiamo la chiave pubblica sulla nostra GCP VM
+
+Andiamo su GCP -> Compute Engine -> VM Instances
+
+- click sul nome istanza "odoo-server"
+- click su EDIT
+- scroll down until you find SSH Keys -> click "+ ADD ITEM" button
+- inserisci dentro il campo che ti si presenta il contenuto del file "fb-odoo-server-key.pub"
+
+Lo puoi fare da interfaccia grafica:
+
+- vai nella cartella FlaMac -> Users -> FB
+- premi Command + Shift + . (the period key). This will show hidden files in the folder. (To hide the files again, press Command + Shift + . again.)
+- entra nella cartella .ssh ed apri il file `fb-odoo-server-key.pub` con TextEdit
+- copia TUTTO il testo incluso "ssh-rsa" iniziale e "tt-fb" finale.
+
+Oppure da terminale:
+
+```bash
+$ cd ~/.ssh
+$ cat fb-odoo-server-key.pub
+```
+
+Esempio:
+
+```bash
+MacBook-Pro-di-Flavio:.ssh FB$ cat fb-odoo-server-key.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC4JaFYyGoTCCIRESm6hLS6XhhNzqZqRK/YdSNEQIoFePs+KqGM+s1AYWOhecHpT/8h5x7h5GwuZHdYUFScHoVS5Qu1UhdJaXqvApHHNrFB0MpjuX9mag+KNHySAsnAuxKHxJ/0DDzUUYzWHS647tlfuZJEUCUa4DAYvJp6K9cGiXO8YL9qY8WC3KJMOd4Yy4hRZWq44L17aklZigY9564/ILErDYNPz++EXamj+6RfW/WbZ8c0iLTC5QJ1bUhjnJOKaxtZ0h5uHY03+bb3EDVx3w0eKMcUIaBMj4i8g2CRrRLUr1LUt8ZLuKC2bTTqw+X5WsP6FOSjsLbNN1KiHnS3P6qApql4m2ni8E5P0mFJT+hL9+0hRh4vYbWtJqrFWiyFjEOAfLe5HlhVMLgyLKuJ6vbhY+pbo7c+JAHOxrNIZigp5f5l3IbmwqyZDcHUoIG8aGLt/Vx9ONZ6nCQgWLnXxxPfh5tHbluo4RAhcJPM06L0xNVvQfypoCjbie2nvkk= tt-fb
+MacBook-Pro-di-Flavio:.ssh FB$
+```
+
+
+
+## Colleghiamoci
+Per collegarci useremo la nostra chiave privata (il file "fb-odoo-server-key")
+
+```bash
+$ ssh -i ~/.ssh/fb-odoo-server-key tt-fb@34.154.165.20
+```
+
+- `tt-fb@34.154.240.173`: username + indirizzo IP PUBBLICO della VM GCP
+
+Esempio:
+
+```bash
+MacBook-Pro-di-Flavio:.ssh FB$ ssh -i ~/.ssh/fb-odoo-server-key tt-fb@34.154.240.173
+The authenticity of host '34.154.240.173 (34.154.240.173)' can't be established.
+ECDSA key fingerprint is SHA256:FNEV+0eHZs7if63nAFmjLdUNutUSWiyIIQVQyBSSvxo.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '34.154.240.173' (ECDSA) to the list of known hosts.
+Welcome to Ubuntu 22.04.3 LTS (GNU/Linux 6.2.0-1018-gcp x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Mon Nov 20 15:46:52 UTC 2023
+
+  System load:  0.0               Processes:             99
+  Usage of /:   3.8% of 48.27GB   Users logged in:       0
+  Memory usage: 2%                IPv4 address for ens4: 10.198.0.2
+  Swap usage:   0%
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+tt-fb@server-odoo:~$ 
+```
+
+
+
+## Colleghiamoci con un'altra chiave di criptatura SSH
+Possiamo saltare questo paragrafo.
+A scopo didattico creiamo un'altra coppia di chiavi.
+
+Lanciamo il terminale:
+
+```bash
+$ ssh-keygen -t rsa -f ~/Desktop/other-key -C otheruser
 ```
 
 - `-t` è per scegliere il tipo di criptatura. Abbiamo scelto `rsa`.
-- `-f` è per scegliere la cartella su cui mettere le chiavi.
-- `-C` sta per "comment"
-- e per ultimo lo "username". In questo caso `techamatic`
+- `-f` è per scegliere la cartella su cui mettere le chiavi ed il nome delle chiavi.
+- `-C` è per lo "username". In questo caso `otheruser`
 
 Questo comando ci crea i seguenti due files sul desktop:
-- key (che è la chiave privata)
-- key.pub (che è la chiave pubblica)
+- `other-key` : che è la chiave privata
+- `other-key.pub` : che è la chiave pubblica
+
+
+Altro modo di creare la stessa coppia di chiavi:
+
+```bash
+$ cd ~/Desktop
+$ ssh-keygen -t rsa -f other-key -C otheruser -b 2048
+```
+
+- `-f` sono già nella cartella che mi interessa quindi do solo il nome delle chiavi.
+- `-b` è la dimensione della chiave in bits (key size in bits). In questo caso `2048`
+
 
 
 ## Mettiamo la chiave pubblica sulla nostra VM
@@ -50,18 +192,17 @@ Questo comando ci crea i seguenti due files sul desktop:
 Andiamo su GCP -> Compute Engine -> VM Instances
 - click sul nome istanza "odoo-server"
 - click su EDIT
-- scroll down until you find "You have 0 SSH keys" -> click "show and edit" button
-- inserisci dentro il campo che ti si presenta il contenuto del file "key.pub"
-  (il file key.pub lo puoi aprire con TextEdit)
+- scroll down until you find "You have 1 SSH keys" -> click "show and edit" button
+- inserisci dentro il campo che ti si presenta il contenuto del file "other-key.pub"
+  (il file other-key.pub lo puoi aprire con TextEdit)
 
 
 ## Colleghiamoci
-Per collegarci useremo la nostra chiave privata (il file "key")
+Per collegarci useremo la nostra chiave privata (il file "other-key")
 
 ```bash
-$ ssh -i ~/Desktop/key techamatic@35.198.222.21
+$ ssh -i ~/Desktop/other-key otheruser@35.198.222.21
 ```
-- `techamatic@35.198.222.21`: username + indirizzo IP PUBBLICO della VM GCP
 
 
 
